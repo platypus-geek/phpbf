@@ -29,54 +29,33 @@ function bfexec(&$bfArray, $cmd)
     }
 }
 
-$bf = '+++[>+++++>+[>++<-]<-].';
+$bf = '+++[>+++++>+[>++<-]<<-].';
+
 
 $bfArray = [];
 $bfArray[] = 0;
-$whileCmd = [];
-$openWhile = 0;
-        
-$bf = str_split ($bf);
-foreach ($bf as $cmd) {
 
+$bf = str_split ($bf);
+for ($i = 0; $i < count($bf); $i++)
+{
+    $cmd = $bf[$i];
     if ($cmd === '[') {
-        $openWhile ++;
-        $whileCmd[$openWhile] = '';
-        
         continue;
     }
     
-    if ($cmd === ']') {
-        $openWhile --;
-        
-        continue;
-    }
-    
-    if ($openWhile > 0) {
-        $whileCmd[$openWhile] .= $cmd;
-        continue;
-    }
-    
-    if (!empty($whileCmd)) {
-        
-        
-    
-        foreach ($whileCmd as $subBf) {
-            $subBf = str_split($subBf);
-            var_dump($bfArray, $subBf);
-            while(current($bfArray) !==0) {
-                foreach ($subBf as $subCmd) {
-                    bfexec($bfArray, $subCmd);
-                }
-                echo current($bfArray);exit;
+    if ($cmd === ']' && current($bfArray) !==0) {
+        $loop = 1;
+        while ($loop > 0) {
+            $i--;
+            $cmd = $bf[$i];
+            if ($cmd === '[') {
+                $loop--;
+            } else if ($cmd === ']') {
+                $loop++;
             }
         }
         continue;
     }
-
     
     bfexec($bfArray, $cmd);
 }
-
-var_dump($bfArray);
-?>
